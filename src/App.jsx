@@ -4,6 +4,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("inscription"); // inscription | planning
   const [step, setStep] = useState(1);
   const [showPaymentPrompt, setShowPaymentPrompt] = useState(false);
+  const [copyHint, setCopyHint] = useState("");
 
   // ÉTAPE 1 — Présence (jours)
   const [days, setDays] = useState({ wed: false, thu: false, fri: false, sat: false, sun: false });
@@ -36,6 +37,15 @@ export default function App() {
   // Tarifs
   const SPORT_UNIT_PRICE = 25;
   const HELLOASSO_URL = "https://www.helloasso.com/associations/caram-elles/evenements/inscription-wisdin-2026";
+  const LOCATIONS = [
+    { name: "Centre LGBTQIA+", address: "Rue Cathy Richeux, 06300 Nice" },
+    { name: "Football — Terrain 14 des Arboras", address: "247 Rte de Grenoble, 06200 Nice" },
+    { name: "Le Croque Bedaine", address: "22 Av. Saint-Jean-Baptiste, 06000 Nice" },
+    { name: "Pétanque — Boulodrome Henri Bernard", address: "183 Rte de Grenoble, 06200 Nice" },
+    { name: "Tennis de table — Gymnase du lycée des Eucalyptus", address: "7 Av. des Eucalyptus, 06200 Nice" },
+    { name: "Badminton, Basket — UFR STAPS", address: "261 Bd du Mercantour, 06200 Nice" },
+    { name: "Château", address: "Quai Rauba Capeu, 06300 Nice" },
+  ];
 
   const PACKS = [
     {
@@ -341,6 +351,41 @@ export default function App() {
     </div>
   );
 
+  const LocationCard = ({ name, address }) => {
+    const openMaps = () => {
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name} ${address}`)}`;
+      window.open(url, "_blank");
+    };
+
+    const copyAddress = async () => {
+      try {
+        await navigator.clipboard.writeText(`${name}, ${address}`);
+        setCopyHint(name);
+        setTimeout(() => setCopyHint(""), 1600);
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    return (
+      <div style={styles.locationCard}>
+        <div>
+          <div style={styles.locationTitle}>{name}</div>
+          <div style={styles.locationAddress}>{address}</div>
+          {copyHint === name && <div style={styles.copyHint}>Adresse copiée dans le presse-papiers</div>}
+        </div>
+        <div style={styles.locationActions}>
+          <button style={styles.secondary} onClick={copyAddress}>
+            Copier
+          </button>
+          <button style={styles.button} onClick={openMaps}>
+            Ouvrir Maps
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div style={styles.page}>
       <div style={styles.card}>
@@ -373,17 +418,27 @@ export default function App() {
           >
             Emploi du temps
           </button>
+          <button
+            type="button"
+            style={{ ...styles.tabBtn, ...(activeTab === "map" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("map")}
+          >
+            Carte
+          </button>
         </div>
 
         {activeTab === "planning" ? (
           <>
             <h2 style={styles.h2}>Emploi du temps complet</h2>
-            <p style={styles.helper}>
-              Tous les sports et événements avec horaires, jours et lieux. Les éléments “à préciser” sont à confirmer.
-            </p>
 
             {["wed", "thu", "fri", "sat", "sun"].map((day) => (
               <ScheduleDay key={day} dayKey={day} />
+            ))}
+          </>
+        ) : activeTab === "map" ? (
+          <>
+            {LOCATIONS.map((loc) => (
+              <LocationCard key={loc.name} name={loc.name} address={loc.address} />
             ))}
           </>
         ) : (
@@ -1105,4 +1160,20 @@ const styles = {
     gap: 10,
     marginTop: 14,
   },
+
+  locationCard: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 12,
+    alignItems: "center",
+    background: "#fff",
+    border: "1px solid #eaeaea",
+    borderRadius: 12,
+    padding: "12px 14px",
+    marginBottom: 10,
+  },
+  locationTitle: { fontWeight: 900, fontSize: 16, color: "#111" },
+  locationAddress: { color: "#666", fontSize: 14 },
+  locationActions: { display: "flex", gap: 8 },
+  copyHint: { color: "#0a7e07", fontSize: 12, marginTop: 4, fontWeight: 700 },
 };
