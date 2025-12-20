@@ -39,12 +39,12 @@ export default function App() {
   const HELLOASSO_URL = "https://www.helloasso.com/associations/caram-elles/evenements/inscription-wisdin-2026";
   const LOCATIONS = [
     { name: "Centre LGBTQIA+", address: "Rue Cathy Richeux, 06300 Nice" },
-    { name: "Football — Terrain 14 des Arboras", address: "247 Rte de Grenoble, 06200 Nice" },
+    { name: "Football", address: "247 Rte de Grenoble, 06200 Nice" },
     { name: "Le Croque Bedaine", address: "22 Av. Saint-Jean-Baptiste, 06000 Nice" },
-    { name: "Pétanque — Boulodrome Henri Bernard", address: "183 Rte de Grenoble, 06200 Nice" },
-    { name: "Tennis de table — Gymnase du lycée des Eucalyptus", address: "7 Av. des Eucalyptus, 06200 Nice" },
-    { name: "Badminton, Basket — UFR STAPS", address: "261 Bd du Mercantour, 06200 Nice" },
-    { name: "Château", address: "Quai Rauba Capeu, 06300 Nice" },
+    { name: "Pétanque", address: "183 Rte de Grenoble, 06200 Nice" },
+    { name: "Tennis de table", address: "7 Av. des Eucalyptus, 06200 Nice" },
+    { name: "Badminton, Basket", address: "261 Bd du Mercantour, 06200 Nice" },
+    { name: "Château", address: "Ancien Chateau, Quai Rauba Capeu, 06300 Nice" },
   ];
 
   const PACKS = [
@@ -353,13 +353,13 @@ export default function App() {
 
   const LocationCard = ({ name, address }) => {
     const openMaps = () => {
-      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name} ${address}`)}`;
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
       window.open(url, "_blank");
     };
 
     const copyAddress = async () => {
       try {
-        await navigator.clipboard.writeText(`${name}, ${address}`);
+        await navigator.clipboard.writeText(address);
         setCopyHint(name);
         setTimeout(() => setCopyHint(""), 1600);
       } catch (e) {
