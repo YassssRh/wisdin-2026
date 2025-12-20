@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 export default function App() {
   const [activeTab, setActiveTab] = useState("inscription"); // inscription | planning
   const [step, setStep] = useState(1);
+  const [showPaymentPrompt, setShowPaymentPrompt] = useState(false);
 
   // ÉTAPE 1 — Présence (jours)
   const [days, setDays] = useState({ wed: false, thu: false, fri: false, sat: false, sun: false });
@@ -34,6 +35,7 @@ export default function App() {
 
   // Tarifs
   const SPORT_UNIT_PRICE = 25;
+  const HELLOASSO_URL = "https://www.helloasso.com/associations/caram-elles/evenements/inscription-wisdin-2026";
 
   const PACKS = [
     {
@@ -259,6 +261,23 @@ export default function App() {
 
     return sum;
   }, [tariffPrice, events, days, mealByDay]);
+
+  const goToHelloAsso = () => {
+    setShowPaymentPrompt(true);
+  };
+
+  const openHelloAsso = () => {
+    window.open(HELLOASSO_URL, "_blank");
+    setShowPaymentPrompt(false);
+  };
+
+  const copyAmount = async () => {
+    try {
+      await navigator.clipboard.writeText(`${total}`);
+    } catch (e) {
+      // ignore clipboard errors silently
+    }
+  };
 
   // UI components
   const Section = ({ title, note, children }) => (
@@ -741,9 +760,12 @@ export default function App() {
               <div style={styles.helper}>
                 Voilà pour le site proto, ensuite let's go continuer vers HelloAsso pour le terminal de paiement...
               </div>
+              <button style={{ ...styles.button, marginTop: 12 }} onClick={goToHelloAsso}>
+                Payer sur HelloAsso
+              </button>
             </Section>
 
-                <div style={styles.nav}>
+            <div style={styles.nav}>
                   <button style={styles.secondary} onClick={() => setStep(3)}>
                     Retour
                   </button>
@@ -754,6 +776,31 @@ export default function App() {
               </>
             )}
           </>
+        )}
+
+        {showPaymentPrompt && (
+          <div style={styles.overlay}>
+            <div style={styles.modal}>
+              <div style={{ fontWeight: 900, fontSize: 18, marginBottom: 6 }}>Payer sur HelloAsso</div>
+              <div style={styles.helper}>
+                Montant à saisir sur HelloAsso : <strong>{total}€</strong>
+              </div>
+              <div style={styles.helper}>
+                Le montant ne peut pas être pré-rempli automatiquement. Copie-le puis clique sur “Ouvrir HelloAsso”.
+              </div>
+              <div style={styles.modalActions}>
+                <button style={styles.secondary} onClick={() => setShowPaymentPrompt(false)}>
+                  Annuler
+                </button>
+                <button style={styles.secondary} onClick={copyAmount}>
+                  Copier {total}€
+                </button>
+                <button style={styles.button} onClick={openHelloAsso}>
+                  Ouvrir HelloAsso
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
@@ -1032,5 +1079,30 @@ const styles = {
     borderRadius: 999,
     fontWeight: 800,
     fontSize: 12,
+  },
+
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.4)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+    padding: 12,
+  },
+  modal: {
+    background: "#fff",
+    borderRadius: 14,
+    padding: 16,
+    maxWidth: 460,
+    width: "100%",
+    boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
+  },
+  modalActions: {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: 10,
+    marginTop: 14,
   },
 };
