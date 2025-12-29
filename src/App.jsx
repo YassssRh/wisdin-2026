@@ -60,6 +60,58 @@ export default function App() {
     { name: "Badminton, Basket", address: "261 Bd du Mercantour, 06200 Nice" },
     { name: "Château", address: "Ancien Chateau, Quai Rauba Capeu, 06300 Nice" },
   ];
+  const SPORTS_INFO = [
+    {
+      name: "Badminton double",
+      description: "Tournoi de badminton en double",
+      img: "/photos_sports/Bad.png",
+    },
+    {
+      name: "Football à 7",
+      description: "Tournoi de foot à 7 joueuses sur gazon synthétique au stade N°14 des Arboras",
+      img: "/photos_sports/Foot.png",
+    },
+    {
+      name: "Pétanque",
+      description: "Tournoi de pétanque. Pétanque en triplette au boulodrome Henri Bernard",
+      img: "/photos_sports/Pétanque.png",
+    },
+    {
+      name: "Basket 3x3",
+      description: "Tournoi de basket 3x3",
+      img: null, // placeholder pour ajout futur
+    },
+  ];
+
+  const ACTIVITIES_INFO = [
+    {
+      name: "Rallye urbain",
+      description:
+        "Point de départ et d'arrivée au Centre LGBTQIA+ (123 rue de Roquebillière). Rdv 13h30. Course d’orientation à travers la Ville de Nice : indices à photographier, questions posées par les bénévoles dans un temps imparti.",
+      img: "/photos_activités/Rallye.png",
+    },
+    {
+      name: "Sortie culturelle : Rando - Balade - Visite",
+      description: "Balade/rando/visite sur Nice — lieu et horaire à préciser.",
+      img: null,
+    },
+    {
+      name: "Atelier participatif « clubs sportifs plus inclusifs »",
+      description: "Atelier pour développer des clubs sportifs plus inclusifs (vendredi 19h, Centre LGBTQIA+).",
+      img: null,
+    },
+    {
+      name: "Course solidaire",
+      description:
+        "Dimanche 17 mai à 12h : course de 2 km en solo ou duo. Rassemblement sur l'esplanade des Arcades du Château de Nice à partir de 11h30. Parking gratuit, tram Garibaldi Le Château puis montée à pied.",
+      img: "/photos_activités/Course_solidaire.png",
+    },
+    {
+      name: "Jeux au château",
+      description: "Jeux au château le dimanche (après la course) sur la colline du château.",
+      img: null,
+    },
+  ];
 
   const PACKS = [
     {
@@ -610,27 +662,38 @@ export default function App() {
           <>
             <h2 style={styles.h2}>Sports du programme</h2>
             <Section title="Liste des sports">
-              {ALL_SPORTS.map((s) => (
-                <div key={s} style={styles.recapLine}>
-                  {s}
-                </div>
-              ))}
+              <div style={styles.infoGrid}>
+                {SPORTS_INFO.map((s) => (
+                  <div key={s.name} style={styles.infoCard}>
+                    {s.img ? (
+                      <img src={s.img} alt={s.name} style={styles.infoImg} />
+                    ) : (
+                      <div style={styles.infoNoImg}>Photo à venir</div>
+                    )}
+                    <div style={styles.infoTitle}>{s.name}</div>
+                    <div style={styles.infoDesc}>{s.description}</div>
+                  </div>
+                ))}
+              </div>
             </Section>
           </>
         ) : activeTab === "activites" ? (
           <>
             <h2 style={styles.h2}>Activités</h2>
             <Section title="Activités programmées">
-              {EVENTS.filter((e) => EVENT_ACTIVITY_IDS.includes(e.id)).map((e) => (
-                <div key={e.id} style={styles.recapLine}>
-                  <strong>{e.label}</strong>{" "}
-                  <span style={styles.miniNote}>
-                    {Array.isArray(e.days) ? e.days.map((d) => DAY_LABEL[d]).join(" / ") : DAY_LABEL[e.day]}
-                    {" • "}
-                    {(e.start || e.end) ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}` : "Horaire à préciser"}
-                  </span>
-                </div>
-              ))}
+              <div style={styles.infoGrid}>
+                {ACTIVITIES_INFO.map((a) => (
+                  <div key={a.name} style={styles.infoCard}>
+                    {a.img ? (
+                      <img src={a.img} alt={a.name} style={styles.infoImg} />
+                    ) : (
+                      <div style={styles.infoNoImg}>Photo à venir</div>
+                    )}
+                    <div style={styles.infoTitle}>{a.name}</div>
+                    <div style={styles.infoDesc}>{a.description}</div>
+                  </div>
+                ))}
+              </div>
             </Section>
           </>
         ) : activeTab === "soirees" ? (
@@ -1496,6 +1559,42 @@ const styles = {
     color: "#7c1111",
   },
   partnerLogo: { maxWidth: "100%", maxHeight: 70, objectFit: "contain" },
+
+  infoGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: 14,
+  },
+  infoCard: {
+    background: "rgba(255,255,255,0.95)",
+    border: "1px solid #e4d5ff",
+    borderRadius: 12,
+    padding: 12,
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    textAlign: "center",
+    alignItems: "center",
+  },
+  infoImg: {
+    width: "100%",
+    height: 140,
+    objectFit: "cover",
+    borderRadius: 10,
+  },
+  infoNoImg: {
+    width: "100%",
+    height: 140,
+    borderRadius: 10,
+    background: "linear-gradient(135deg, #fbe9d7, #f7d1ff)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#7c1111",
+    fontWeight: 800,
+  },
+  infoTitle: { fontWeight: 900, color: "#111", fontSize: 16 },
+  infoDesc: { color: "#444", fontSize: 14, lineHeight: 1.5 },
 
   scheduleDay: {
     border: "1px solid #eee",
