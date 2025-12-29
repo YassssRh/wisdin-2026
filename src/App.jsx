@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState("inscription"); // inscription | planning
+  const [activeTab, setActiveTab] = useState("home"); // home | presentation | inscription | planning | map | sports | activites | soirees | contacts
   const [step, setStep] = useState(1);
   const [showPaymentPrompt, setShowPaymentPrompt] = useState(false);
   const [copyHint, setCopyHint] = useState("");
@@ -37,6 +37,20 @@ export default function App() {
   // Tarifs
   const SPORT_UNIT_PRICE = 25;
   const HELLOASSO_URL = "https://www.helloasso.com/associations/caram-elles/evenements/inscription-wisdin-2026";
+  const LOGO_URL = "/wisdin-logo.png"; // placer le logo dans /public/wisdin-logo.png
+  const CARAMELLES_LOGO = "/partners/caramelles.png"; // placé dans /public/partners
+  const PARTNERS = [
+    { name: "Département des Alpes-Maritimes", logo: "/partners/departement-alpes-maritimes.png" },
+    { name: "Ville de Nice", logo: "/partners/ville-de-nice.png" },
+    { name: "Union Européenne", logo: "/partners/eu-cofunded.png" },
+    { name: "València Gay Games XII 2026", logo: "/partners/valencia-gay-games.png" },
+    { name: "Fully Girlz", logo: "/partners/fully-girlz.jpeg" },
+    { name: "Fédération Sportive LGBT+", logo: "/partners/federation-sportive-lgbt.png" },
+    { name: "Centre LGBTQIA+ Côte d’Azur", logo: "/partners/centre-lgbtqia.png" },
+    { name: "Le Croque Bedaine", logo: "/partners/croque-bedaine.jpg" },
+    { name: "Engie Home Services", logo: "/partners/engie-home-services.png" },
+    { name: "Begaym", logo: "/partners/begaym.webp" },
+  ];
   const LOCATIONS = [
     { name: "Centre LGBTQIA+", address: "Rue Cathy Richeux, 06300 Nice" },
     { name: "Football", address: "247 Rte de Grenoble, 06200 Nice" },
@@ -108,37 +122,39 @@ export default function App() {
     { id: "sun-buffet", label: "Buffet offert par la Ville de Nice", place: "Château", price: 0, day: "sun", start: "13h00", end: "14h30" },
     { id: "sun-cloture", label: "Clôture WISDIN", place: "Château", price: 0, day: "sun", start: "16h00", end: "17h00" },
   ];
+  const EVENT_ACTIVITY_IDS = ["wed-rallye", "thu-fri-sortie", "fri-atelier", "sun-course", "sun-games"];
+  const EVENT_SOIREE_IDS = ["wed-welcome", "thu-karaoke", "fri-activelles", "fri-before", "fri-cantine", "fri-fullgirlz", "sat-bigparty"];
 
   const SCHEDULE = {
     wed: [
-      { time: "14h00", timeEnd: "16h00", title: "Rallye urbain", place: "Départ/arrivée Centre LGBTQIA+", type: "event" },
-      { time: "17h00", timeEnd: "20h00", title: "Soirée d’accueil des participantes", place: "Centre LGBTQIA+", type: "event" },
+      { time: "14h00", timeEnd: "16h00", title: "Rallye urbain", place: "Départ/arrivée Centre LGBTQIA+", type: "activite" },
+      { time: "17h00", timeEnd: "20h00", title: "Soirée d’accueil des participantes", place: "Centre LGBTQIA+", type: "soiree" },
     ],
     thu: [
       { time: "09h00", timeEnd: "11h00", title: "Football à 7", place: "Terrain 14 des Arboras", type: "sport" },
       { time: "10h00", timeEnd: "12h00", title: "Tennis de table", place: "Gymnase du lycée des Eucalyptus", type: "sport" },
-      { time: "À préciser", timeEnd: "", title: "Sortie culturelle : Rando - Balade - Visite", place: "Lieu à préciser", type: "event" },
-      { time: "19h00", timeEnd: "21h00", title: "Karaoké", place: "Croque Bedaine", type: "event" },
+      { time: "À préciser", timeEnd: "", title: "Sortie culturelle : Rando - Balade - Visite", place: "Lieu à préciser", type: "activite" },
+      { time: "19h00", timeEnd: "21h00", title: "Karaoké", place: "Croque Bedaine", type: "soiree" },
     ],
     fri: [
       { time: "09h00", timeEnd: "12h00", title: "Pétanque", place: "Boulodrome Henri Bernard", type: "sport" },
-      { time: "19h00", timeEnd: "22h00", title: "Soirée Activ’elles", place: "Centre LGBTQIA+", type: "event" },
-      { time: "19h00", timeEnd: "21h00", title: "Atelier participatif « clubs sportifs plus inclusifs »", place: "Centre LGBTQIA+", type: "event" },
-      { time: "À préciser", timeEnd: "", title: "Sortie culturelle : Rando - Balade - Visite", place: "Lieu à préciser", type: "event" },
-      { time: "À préciser", timeEnd: "", title: "Soirée jeux en before ? Baby-foot ? Bar Ozz ou autre", place: "Lieu à confirmer", type: "event" },
-      { time: "À préciser", timeEnd: "", title: "Soirée à la Cantine de Jo ? (avec Anne et Muriel)", place: "Lieu à confirmer", type: "event" },
-      { time: "23h30", timeEnd: "02h30", title: "Soirée Full Girlz", place: "Kosma ou Glam (à confirmer)", type: "event" },
+      { time: "19h00", timeEnd: "22h00", title: "Soirée Activ’elles", place: "Centre LGBTQIA+", type: "soiree" },
+      { time: "19h00", timeEnd: "21h00", title: "Atelier participatif « clubs sportifs plus inclusifs »", place: "Centre LGBTQIA+", type: "activite" },
+      { time: "À préciser", timeEnd: "", title: "Sortie culturelle : Rando - Balade - Visite", place: "Lieu à préciser", type: "activite" },
+      { time: "À préciser", timeEnd: "", title: "Soirée jeux en before ? Baby-foot ? Bar Ozz ou autre", place: "Lieu à confirmer", type: "soiree" },
+      { time: "À préciser", timeEnd: "", title: "Soirée à la Cantine de Jo ? (avec Anne et Muriel)", place: "Lieu à confirmer", type: "soiree" },
+      { time: "23h30", timeEnd: "02h30", title: "Soirée Full Girlz", place: "Kosma ou Glam (à confirmer)", type: "soiree" },
     ],
     sat: [
       { time: "09h00", timeEnd: "12h00", title: "Badminton double", place: "UFR Staps", type: "sport" },
       { time: "13h00", timeEnd: "15h00", title: "Basket 3x3", place: "UFR Staps", type: "sport" },
-      { time: "20h00", timeEnd: "02h00", title: "Big Soirée de clôture WISDIN", place: "Lieu à déterminer", type: "event" },
+      { time: "20h00", timeEnd: "02h00", title: "Big Soirée de clôture WISDIN", place: "Lieu à déterminer", type: "soiree" },
     ],
     sun: [
-      { time: "12h00", timeEnd: "12h45", title: "Course solidaire (sous réserve)", place: "Château", type: "event" },
-      { time: "12h30", timeEnd: "14h00", title: "Jeux au château", place: "Château", type: "event" },
-      { time: "13h00", timeEnd: "14h30", title: "Buffet offert par la Ville de Nice", place: "Château", type: "event" },
-      { time: "16h00", timeEnd: "17h00", title: "Clôture WISDIN", place: "Château", type: "event" },
+      { time: "12h00", timeEnd: "12h45", title: "Course solidaire (sous réserve)", place: "Château", type: "activite" },
+      { time: "12h30", timeEnd: "14h00", title: "Jeux au château", place: "Château", type: "activite" },
+      { time: "13h00", timeEnd: "14h30", title: "Buffet offert par la Ville de Nice", place: "Château", type: "commun" },
+      { time: "16h00", timeEnd: "17h00", title: "Clôture WISDIN", place: "Château", type: "commun" },
     ],
   };
 
@@ -340,11 +356,22 @@ export default function App() {
           <span
             style={{
               ...styles.badge,
-              background: item.type === "sport" ? "#0d6efd" : "#f97316",
-              color: "#fff",
+              ...(item.type === "sport"
+                ? { background: "#0d6efd", color: "#fff" }
+                : item.type === "soiree"
+                ? { background: "#f97316", color: "#fff" }
+                : item.type === "activite"
+                ? { background: "#23a559", color: "#fff" }
+                : { display: "none" }),
             }}
           >
-            {item.type === "sport" ? "Sport" : "Événement"}
+            {item.type === "sport"
+              ? "Sport"
+              : item.type === "soiree"
+              ? "Soirée"
+              : item.type === "activite"
+              ? "Activité"
+              : ""}
           </span>
         </div>
       ))}
@@ -390,20 +417,46 @@ export default function App() {
     <div style={styles.page}>
       <div style={styles.card}>
         <div style={styles.headerRow}>
-          <div>
-            <h1 style={styles.title}>WISDIN 2026</h1>
-            <p style={styles.subtitle}>Inscription – proto</p>
-          </div>
-
-          <div style={styles.totalPill}>
-            <div style={styles.totalLabel}>Total</div>
-            <div style={styles.totalValue}>
-              {step === 1 ? "0€" : `${total}€`}
+          <div style={styles.headerLeft}>
+            <img
+              src={LOGO_URL}
+              alt="Logo WISDIN"
+              style={styles.logo}
+              onError={(e) => {
+                e.target.style.display = "none";
+              }}
+            />
+            <div>
+              <h1 style={styles.title}>WISDIN 2026</h1>
+              <p style={styles.subtitle}>Women International Sports Days In Nice</p>
             </div>
           </div>
+
+          {activeTab === "inscription" && (
+            <div style={styles.totalPill}>
+              <div style={styles.totalLabel}>Total</div>
+              <div style={styles.totalValue}>
+                {step === 1 ? "0€" : `${total}€`}
+              </div>
+            </div>
+          )}
         </div>
 
         <div style={styles.tabRow}>
+          <button
+            type="button"
+            style={{ ...styles.tabBtn, ...(activeTab === "home" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("home")}
+          >
+            Accueil
+          </button>
+          <button
+            type="button"
+            style={{ ...styles.tabBtn, ...(activeTab === "presentation" ? styles.tabBtnActive : {}), minWidth: 180 }}
+            onClick={() => setActiveTab("presentation")}
+          >
+            Présentation
+          </button>
           <button
             type="button"
             style={{ ...styles.tabBtn, ...(activeTab === "inscription" ? styles.tabBtnActive : {}) }}
@@ -416,7 +469,7 @@ export default function App() {
             style={{ ...styles.tabBtn, ...(activeTab === "planning" ? styles.tabBtnActive : {}) }}
             onClick={() => setActiveTab("planning")}
           >
-            Emploi du temps
+            Programme
           </button>
           <button
             type="button"
@@ -425,11 +478,123 @@ export default function App() {
           >
             Carte
           </button>
+          <button
+            type="button"
+            style={{ ...styles.tabBtn, ...(activeTab === "sports" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("sports")}
+          >
+            Sports
+          </button>
+          <button
+            type="button"
+            style={{ ...styles.tabBtn, ...(activeTab === "activites" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("activites")}
+          >
+            Activités
+          </button>
+          <button
+            type="button"
+            style={{ ...styles.tabBtn, ...(activeTab === "soirees" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("soirees")}
+          >
+            Soirées
+          </button>
+          <button
+            type="button"
+            style={{ ...styles.tabBtn, ...(activeTab === "contacts" ? styles.tabBtnActive : {}) }}
+            onClick={() => setActiveTab("contacts")}
+          >
+            Contacts
+          </button>
         </div>
 
-        {activeTab === "planning" ? (
+        {activeTab === "home" ? (
           <>
-            <h2 style={styles.h2}>Emploi du temps complet</h2>
+            <div style={styles.hero}>
+              <div>
+                <div style={styles.heroBadge}>13 — 17 mai 2026 · Nice</div>
+                <h2 style={styles.heroTitle}>Une nouvelle édition de WISDIN se prépare !</h2>
+                <div style={styles.heroSubtitle}>Women International Sports Days In Nice</div>
+                <p style={styles.heroText}>
+                  Caram'elles est heureuse de présenter la 4ème édition des Rencontres Internationales Sportives
+                  Féminines de Nice. Sport, convivialité, respect et découverte de la ville.
+                </p>
+                <button style={styles.button} onClick={() => setActiveTab("inscription")}>
+                  Commencer l’inscription
+                </button>
+              </div>
+              <div style={{ ...styles.heroCircle, backgroundImage: `url(${CARAMELLES_LOGO})` }} />
+            </div>
+
+            <div style={styles.section}>
+              <div style={styles.sectionHeader}>
+                <div style={styles.sectionTitle}>Partenaires WISDIN</div>
+              </div>
+              <div style={styles.partnerGrid}>
+                {PARTNERS.map((p) => (
+                  <div key={p.name} style={styles.partnerCard}>
+                    {p.logo ? (
+                      <img
+                        src={p.logo}
+                        alt={p.name}
+                        style={styles.partnerLogo}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    ) : null}
+                    <div>{p.name}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : activeTab === "presentation" ? (
+          <>
+            <h2 style={styles.h2}>À propos de WISDIN 2026</h2>
+            <p style={styles.helper}>
+              WISDIN, ce sont avant tout des rencontres et non une réelle compétition. Objectif : partager un maximum
+              d’activités sportives et culturelles dans un univers de femmes et en toute sécurité.
+            </p>
+            <div style={styles.presentationMedia}>
+              <img
+                src="/partners/Photo présentation .png"
+                alt="Groupe Caram'elles"
+                style={styles.presentationImg}
+              />
+            </div>
+            <div style={styles.presentationGrid}>
+              <div style={styles.presentationCol}>
+                <div style={styles.presBlockTitle}>Objectifs</div>
+                <ul style={styles.presList}>
+                  <li>Lutter contre les discriminations.</li>
+                  <li>Promouvoir les droits des femmes, l’égalité et la diversité.</li>
+                  <li>Faciliter l’inclusion par le sport.</li>
+                  <li>Rendre visibles les femmes dans le sport.</li>
+                  <li>Permettre aux femmes de tout âge et conditions de participer.</li>
+                  <li>Découvrir Nice et les Alpes-Maritimes dans un cadre inclusif.</li>
+                </ul>
+              </div>
+              <div style={styles.presentationCol}>
+                <div style={styles.presBlockTitle}>Bénéficiaires</div>
+                <ul style={styles.presList}>
+                  <li>Plus de 1000 personnes concernées : joueuses, visiteuses.</li>
+                  <li>Femmes de tout âge, majoritairement lesbiennes et lesb-friendly.</li>
+                  <li>Personnes transgenres, non binaires et indéterminées bienvenues.</li>
+                </ul>
+                <div style={{ marginTop: 14 }}>
+                  <div style={styles.presBlockTitle}>Territoire</div>
+                  <p style={styles.presParagraph}>
+                    Rencontres organisées dans la Ville de Nice, accueillant des participantes de la région PACA, de la
+                    France et de l’Europe.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : activeTab === "planning" ? (
+          <>
+            <h2 style={styles.h2}>Programme complet</h2>
 
             {["wed", "thu", "fri", "sat", "sun"].map((day) => (
               <ScheduleDay key={day} dayKey={day} />
@@ -440,6 +605,58 @@ export default function App() {
             {LOCATIONS.map((loc) => (
               <LocationCard key={loc.name} name={loc.name} address={loc.address} />
             ))}
+          </>
+        ) : activeTab === "sports" ? (
+          <>
+            <h2 style={styles.h2}>Sports du programme</h2>
+            <Section title="Liste des sports">
+              {ALL_SPORTS.map((s) => (
+                <div key={s} style={styles.recapLine}>
+                  {s}
+                </div>
+              ))}
+            </Section>
+          </>
+        ) : activeTab === "activites" ? (
+          <>
+            <h2 style={styles.h2}>Activités</h2>
+            <Section title="Activités programmées">
+              {EVENTS.filter((e) => EVENT_ACTIVITY_IDS.includes(e.id)).map((e) => (
+                <div key={e.id} style={styles.recapLine}>
+                  <strong>{e.label}</strong>{" "}
+                  <span style={styles.miniNote}>
+                    {Array.isArray(e.days) ? e.days.map((d) => DAY_LABEL[d]).join(" / ") : DAY_LABEL[e.day]}
+                    {" • "}
+                    {(e.start || e.end) ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}` : "Horaire à préciser"}
+                  </span>
+                </div>
+              ))}
+            </Section>
+          </>
+        ) : activeTab === "soirees" ? (
+          <>
+            <h2 style={styles.h2}>Soirées</h2>
+            <Section title="Soirées programmées">
+              {EVENTS.filter((e) => EVENT_SOIREE_IDS.includes(e.id)).map((e) => (
+                <div key={e.id} style={styles.recapLine}>
+                  <strong>{e.label}</strong>{" "}
+                  <span style={styles.miniNote}>
+                    {Array.isArray(e.days) ? e.days.map((d) => DAY_LABEL[d]).join(" / ") : DAY_LABEL[e.day]}
+                    {" • "}
+                    {(e.start || e.end) ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}` : "Horaire à préciser"}
+                  </span>
+                </div>
+              ))}
+            </Section>
+          </>
+        ) : activeTab === "contacts" ? (
+          <>
+            <h2 style={styles.h2}>Contacts</h2>
+            <Section title="Nous écrire">
+              <div style={styles.recapLine}>
+                Email : <a href="mailto:wisdincaramelles@gmail.com">wisdincaramelles@gmail.com</a>
+              </div>
+            </Section>
           </>
         ) : (
           <>
@@ -581,36 +798,110 @@ export default function App() {
                   )}
                 </Section>
 
-                <Section title="🎉 Événements" note=".        ">
-                  {visibleEvents.map((e) => (
-                <label key={e.id} style={styles.option}>
-                  <input
-                    type="checkbox"
-                    style={styles.checkbox}
-                    checked={events.includes(e.id)}
-                    onChange={() => toggle(events, e.id, setEvents)}
-                  />
-                  <span style={{ flex: 1 }}>
-                    {e.label}
-                    <span style={styles.miniNote}>
-                      {" • "}
-                      {(() => {
-                        const d = Array.isArray(e.days) ? e.days : e.day ? [e.day] : [];
-                        const dayLabel =
-                          d.length === 0
-                            ? "Jour à préciser"
-                            : d.map((k) => DAY_LABEL[k] || k).join(" & ");
-                        const time =
-                          e.start || e.end
-                            ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}`
-                            : "Horaire à préciser";
-                        return `${dayLabel} • ${time}`;
-                      })()}
+            <Section title="🏃‍♀️ Activités">
+              {visibleEvents
+                .filter((e) => EVENT_ACTIVITY_IDS.includes(e.id))
+                .map((e) => (
+                  <label key={e.id} style={styles.option}>
+                    <input
+                      type="checkbox"
+                      style={styles.checkbox}
+                      checked={events.includes(e.id)}
+                      onChange={() => toggle(events, e.id, setEvents)}
+                    />
+                    <span style={{ flex: 1 }}>
+                      {e.label}
+                      <span style={styles.miniNote}>
+                        {" • "}
+                        {(() => {
+                          const d = Array.isArray(e.days) ? e.days : e.day ? [e.day] : [];
+                          const dayLabel =
+                            d.length === 0
+                              ? "Jour à préciser"
+                              : d.map((k) => DAY_LABEL[k] || k).join(" & ");
+                          const time =
+                            e.start || e.end
+                              ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}`
+                              : "Horaire à préciser";
+                          return `${dayLabel} • ${time}`;
+                        })()}
+                      </span>
                     </span>
-                  </span>
-                  <span style={styles.priceTag}>{e.price === 0 ? "Gratuit" : `${e.price}€`}</span>
-                </label>
-              ))}
+                    <span style={styles.priceTag}>{e.price === 0 ? "Gratuit" : `${e.price}€`}</span>
+                  </label>
+                ))}
+            </Section>
+
+            <Section title="🌙 Soirées">
+              {visibleEvents
+                .filter((e) => EVENT_SOIREE_IDS.includes(e.id))
+                .map((e) => (
+                  <label key={e.id} style={styles.option}>
+                    <input
+                      type="checkbox"
+                      style={styles.checkbox}
+                      checked={events.includes(e.id)}
+                      onChange={() => toggle(events, e.id, setEvents)}
+                    />
+                    <span style={{ flex: 1 }}>
+                      {e.label}
+                      <span style={styles.miniNote}>
+                        {" • "}
+                        {(() => {
+                          const d = Array.isArray(e.days) ? e.days : e.day ? [e.day] : [];
+                          const dayLabel =
+                            d.length === 0
+                              ? "Jour à préciser"
+                              : d.map((k) => DAY_LABEL[k] || k).join(" & ");
+                          const time =
+                            e.start || e.end
+                              ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}`
+                              : "Horaire à préciser";
+                          return `${dayLabel} • ${time}`;
+                        })()}
+                      </span>
+                    </span>
+                    <span style={styles.priceTag}>{e.price === 0 ? "Gratuit" : `${e.price}€`}</span>
+                  </label>
+                ))}
+            </Section>
+
+            <Section title="🤝 Moments communs">
+              {visibleEvents
+                .filter(
+                  (e) =>
+                    !EVENT_ACTIVITY_IDS.includes(e.id) &&
+                    !EVENT_SOIREE_IDS.includes(e.id)
+                )
+                .map((e) => (
+                  <label key={e.id} style={styles.option}>
+                    <input
+                      type="checkbox"
+                      style={styles.checkbox}
+                      checked={events.includes(e.id)}
+                      onChange={() => toggle(events, e.id, setEvents)}
+                    />
+                    <span style={{ flex: 1 }}>
+                      {e.label}
+                      <span style={styles.miniNote}>
+                        {" • "}
+                        {(() => {
+                          const d = Array.isArray(e.days) ? e.days : e.day ? [e.day] : [];
+                          const dayLabel =
+                            d.length === 0
+                              ? "Jour à préciser"
+                              : d.map((k) => DAY_LABEL[k] || k).join(" & ");
+                          const time =
+                            e.start || e.end
+                              ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}`
+                              : "Horaire à préciser";
+                          return `${dayLabel} • ${time}`;
+                        })()}
+                      </span>
+                    </span>
+                    <span style={styles.priceTag}>{e.price === 0 ? "Gratuit" : `${e.price}€`}</span>
+                  </label>
+                ))}
             </Section>
 
                 <div style={styles.nav}>
@@ -866,7 +1157,7 @@ const styles = {
   page: {
     width: "100vw",
     minHeight: "100vh",
-    background: "#f6f6f6",
+    background: "linear-gradient(135deg, #f9c5ff 0%, #ffc9a3 20%, #f7f06d 40%, #8cf2a4 60%, #7bd1ff 80%, #c3a7ff 100%)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -874,12 +1165,12 @@ const styles = {
   },
 
   card: {
-    background: "#fff",
+    background: "rgba(255,255,255,0.92)",
     borderRadius: 20,
     padding: 28,
-    maxWidth: 980,
+    maxWidth: 1420,
     width: "100%",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+    boxShadow: "0 12px 36px rgba(0,0,0,0.12)",
     color: "#111",
   },
 
@@ -890,13 +1181,15 @@ const styles = {
     gap: 16,
     marginBottom: 8,
   },
+  headerLeft: { display: "flex", alignItems: "center", gap: 12 },
+  logo: { width: 68, height: 68, borderRadius: "50%", objectFit: "cover", border: "2px solid #7c1111" },
 
-  title: { margin: 0, fontSize: 46, color: "#111", letterSpacing: -0.5 },
-  subtitle: { color: "#555", marginTop: 8, marginBottom: 10 },
+  title: { margin: 0, fontSize: 54, color: "#7c1111", letterSpacing: -0.5, fontWeight: 900 },
+  subtitle: { color: "#2f2f2f", marginTop: 8, marginBottom: 10, fontWeight: 700, fontSize: 17 },
 
   totalPill: {
-    border: "1px solid #eee",
-    background: "#fafafa",
+    border: "1px solid #e7d9ff",
+    background: "rgba(255,255,255,0.9)",
     borderRadius: 16,
     padding: "10px 12px",
     minWidth: 110,
@@ -908,11 +1201,11 @@ const styles = {
   h2: { marginTop: 18, marginBottom: 10 },
 
   section: {
-    border: "1px solid #eee",
+    border: "1px solid #e4d5ff",
     borderRadius: 16,
     padding: 14,
     marginTop: 14,
-    background: "#fafafa",
+    background: "rgba(255,255,255,0.9)",
   },
   sectionHeader: {
     display: "flex",
@@ -920,8 +1213,8 @@ const styles = {
     justifyContent: "space-between",
     marginBottom: 10,
   },
-  sectionTitle: { fontWeight: 900, fontSize: 16, color: "#111" },
-  sectionNote: { fontSize: 13, color: "#666", marginTop: 2 },
+  sectionTitle: { fontWeight: 900, fontSize: 16, color: "#7c1111" },
+  sectionNote: { fontSize: 13, color: "#444", marginTop: 2 },
   sectionBody: {},
 
   option: {
@@ -931,28 +1224,28 @@ const styles = {
     marginBottom: 12,
     color: "#111",
     fontSize: 17,
-    background: "#fff",
-    border: "1px solid #e9e9e9",
+    background: "rgba(255,255,255,0.95)",
+    border: "1px solid #e4d5ff",
     borderRadius: 14,
     padding: "10px 12px",
   },
 
   checkbox: { width: 18, height: 18 },
 
-  priceTag: { fontWeight: 900, color: "#111" },
-  miniNote: { color: "#777", fontSize: 13 },
+  priceTag: { fontWeight: 900, color: "#7c1111" },
+  miniNote: { color: "#444", fontSize: 13 },
 
   block: {
     padding: 12,
-    background: "#fff",
+    background: "rgba(255,255,255,0.95)",
     borderRadius: 14,
-    border: "1px solid #e9e9e9",
+    border: "1px solid #e4d5ff",
   },
 
   button: {
     marginTop: 14,
     padding: "12px 18px",
-    background: "#111",
+    background: "#7c1111",
     color: "white",
     border: "none",
     borderRadius: 12,
@@ -962,11 +1255,11 @@ const styles = {
   },
 
   secondary: {
-    background: "#e5e5e5",
+    background: "#f3eaff",
     color: "#111",
     padding: "12px 18px",
     borderRadius: 12,
-    border: "none",
+    border: "1px solid #e4d5ff",
     fontSize: 16,
     cursor: "pointer",
     fontWeight: 800,
@@ -1067,44 +1360,142 @@ const styles = {
     flex: 1,
     borderRadius: 12,
     padding: "10px 12px",
-    border: "1px solid #e5e5e5",
-    background: "#fff",
-    color: "#111",          
+    border: "1px solid #e4d5ff",
+    background: "rgba(255,255,255,0.95)",
+    color: "#111",
     cursor: "pointer",
     fontWeight: 900,
   },
 
   modeBtnActive: {
-    border: "1px solid #111",
-    background: "#111",
+    border: "1px solid #7c1111",
+    background: "#7c1111",
     color: "#fff",
   },
 
   tabRow: {
     display: "flex",
-    gap: 10,
+    gap: 14,
     marginTop: 10,
     marginBottom: 6,
+    flexWrap: "nowrap",
+    overflow: "hidden",
   },
 
   tabBtn: {
-    flex: 1,
-    padding: "12px 14px",
+    flex: "0 1 auto",
+    padding: "12px 16px",
     borderRadius: 12,
     border: "1px solid #e5e5e5",
     background: "#fff",
     color: "#111",
     cursor: "pointer",
     fontWeight: 900,
-    fontSize: 16,
+    fontSize: 14,
+    minWidth: 140,
+    whiteSpace: "nowrap",
+    textAlign: "center",
   },
 
   tabBtnActive: {
-    border: "1px solid #111",
-    background: "#111",
+    border: "1px solid #7c1111",
+    background: "#7c1111",
     color: "#fff",
     boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
   },
+
+  hero: {
+    display: "grid",
+    gridTemplateColumns: "1.2fr 0.8fr",
+    gap: 20,
+    alignItems: "center",
+    padding: 18,
+    borderRadius: 18,
+    background: "linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.7))",
+    border: "1px solid #e4d5ff",
+    marginBottom: 18,
+  },
+  heroBadge: {
+    display: "inline-flex",
+    padding: "10px 16px",
+    background: "#7c1111",
+    color: "#fff",
+    borderRadius: 999,
+    fontWeight: 800,
+    fontSize: 15,
+    marginBottom: 12,
+  },
+  heroTitle: { fontSize: 36, margin: "4px 0", color: "#7c1111" },
+  heroSubtitle: { fontSize: 20, color: "#2f2f2f", fontWeight: 800, marginBottom: 10 },
+  heroText: { color: "#333", fontSize: 16, lineHeight: 1.6 },
+  heroCircle: {
+    width: "100%",
+    aspectRatio: "1 / 1",
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(255,214,170,0.9), rgba(255,170,150,0.9))",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#7c1111",
+    fontWeight: 900,
+    fontSize: 20,
+  },
+
+  presentationGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 16,
+    marginTop: 12,
+  },
+  presentationMedia: {
+    width: "100%",
+    marginTop: 12,
+    textAlign: "center",
+  },
+  presentationImg: {
+    width: "auto",
+    maxWidth: "70%",
+    height: "auto",
+    objectFit: "contain",
+    display: "inline-block",
+    margin: "0 auto",
+    display: "block",
+  },
+  presentationCol: {
+    background: "rgba(255,255,255,0.9)",
+    border: "1px solid #e4d5ff",
+    borderRadius: 14,
+    padding: 14,
+  },
+  presBlockTitle: { fontWeight: 900, color: "#7c1111", marginBottom: 8 },
+  presList: { margin: 0, paddingLeft: 18, color: "#111", lineHeight: 1.5 },
+  presParagraph: { margin: 0, color: "#111", lineHeight: 1.5 },
+
+  partnerGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+    gap: 14,
+    marginTop: 10,
+    width: "100%",
+  },
+  partnerCard: {
+    background: "rgba(255,255,255,0.95)",
+    border: "1px solid #e4d5ff",
+    borderRadius: 12,
+    padding: 12,
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    fontWeight: 800,
+    color: "#7c1111",
+  },
+  partnerLogo: { maxWidth: "100%", maxHeight: 70, objectFit: "contain" },
 
   scheduleDay: {
     border: "1px solid #eee",
@@ -1130,10 +1521,10 @@ const styles = {
   scheduleTitle: { fontSize: 16, fontWeight: 800, color: "#111" },
   schedulePlace: { fontSize: 14, color: "#666" },
   badge: {
-    padding: "6px 10px",
+    padding: "8px 12px",
     borderRadius: 999,
     fontWeight: 800,
-    fontSize: 12,
+    fontSize: 13,
   },
 
   overlay: {
