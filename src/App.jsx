@@ -20,22 +20,22 @@ export default function App() {
 
   // ÉTAPE 3 — Options (badminton)
   const [badmintonLevel, setBadmintonLevel] = useState("");
-  const [needPartner, setNeedPartner] = useState(false);
+  const [partnerChoice, setPartnerChoice] = useState(""); // "have" | "need"
   const [partnerName, setPartnerName] = useState("");
 
   // ÉTAPE 3 — Repas (1 choix par jour)
   const [mealByDay, setMealByDay] = useState({ thu: "", fri: "", sat: "" , sun: "" });
 
   const ALL_SPORTS = [
-    "Football à 7 — Jeu 14, 9h (Terrain 14 Arboras)",
-    "Tennis de table — Jeu 14, 10h (Gymnase lycée des Eucalyptus)",
-    "Pétanque — Ven 15, 9h (Boulodrome Henri Bernard)",
-    "Badminton double — Sam 16, 9h (UFR Staps)",
-    "Basket 3x3 — Sam 16, 13h (UFR Staps)",
+    "Football à 7 — Jeudi 14 à 9h (Terrain 14 Arboras)",
+    "Tennis de table — Jeudi 14 à 10h (Gymnase lycée des Eucalyptus)",
+    "Pétanque — Vendredi 15 à 9h (Boulodrome Henri Bernard)",
+    "Badminton double — Samedi 16 à 9h (UFR Staps)",
+    "Basket 3x3 — Samedi 16 à 13h (UFR Staps)",
   ];
 
   // Tarifs
-  const SPORT_UNIT_PRICE = 25;
+  const SPORT_UNIT_PRICE = 20;
   const HELLOASSO_URL = "https://www.helloasso.com/associations/caram-elles/evenements/inscription-wisdin-2026";
   const LOGO_URL = "/wisdin-logo.png"; // placer le logo dans /public/wisdin-logo.png
   const CARAMELLES_LOGO = "/partners/caramelles.png"; // placé dans /public/partners
@@ -44,7 +44,7 @@ export default function App() {
     { name: "Ville de Nice", logo: "/partners/ville-de-nice.png" },
     { name: "Union Européenne", logo: "/partners/eu-cofunded.png" },
     { name: "València Gay Games XII 2026", logo: "/partners/valencia-gay-games.png" },
-    { name: "Fully Girlz", logo: "/partners/fully-girlz.jpeg" },
+    { name: "Full Girlz", logo: "/partners/fully-girlz.jpeg" },
     { name: "Fédération Sportive LGBT+", logo: "/partners/federation-sportive-lgbt.png" },
     { name: "Centre LGBTQIA+ Côte d’Azur", logo: "/partners/centre-lgbtqia.png" },
     { name: "Le Croque Bedaine", logo: "/partners/croque-bedaine.jpg" },
@@ -53,12 +53,12 @@ export default function App() {
   ];
   const LOCATIONS = [
     { name: "Centre LGBTQIA+", address: "Rue Cathy Richeux, 06300 Nice" },
-    { name: "Football", address: "247 Rte de Grenoble, 06200 Nice" },
+    { name: "Football", address: "Parc 14 RSSI Football, 261 Bd du Mercantour, 06200 Nice" },
     { name: "Le Croque Bedaine", address: "22 Av. Saint-Jean-Baptiste, 06000 Nice" },
     { name: "Pétanque", address: "183 Rte de Grenoble, 06200 Nice" },
-    { name: "Tennis de table", address: "7 Av. des Eucalyptus, 06200 Nice" },
+    { name: "Tennis de table", address: "14 Bd des Eucalyptus, 06200 Nice" },
     { name: "Badminton, Basket", address: "261 Bd du Mercantour, 06200 Nice" },
-    { name: "Château", address: "Ancien Chateau, Quai Rauba Capeu, 06300 Nice" },
+    { name: "Château", address: "Proche Comptoir des Anges, Quai Rauba Capeu, 06300 Nice" },
   ];
   const SPORTS_INFO = [
     {
@@ -77,6 +77,11 @@ export default function App() {
       img: "/photos_sports/Pétanque.png",
     },
     {
+      name: "Tennis de table",
+      description: "Tournoi de tennis de table (Gymnase du lycée des Eucalyptus)",
+      img: null, // placeholder pour ajout futur
+    },
+    {
       name: "Basket 3x3",
       description: "Tournoi de basket 3x3",
       img: null, // placeholder pour ajout futur
@@ -87,7 +92,7 @@ export default function App() {
     {
       name: "Rallye urbain",
       description:
-        "Point de départ et d'arrivée au Centre LGBTQIA+ (123 rue de Roquebillière). Rdv 13h30. Course d’orientation à travers la Ville de Nice : indices à photographier, questions posées par les bénévoles dans un temps imparti.",
+        "Point de départ et d'arrivée au Centre LGBTQIA+ (123 rue de Roquebillière). Rdv 13h30. Course d’orientation à travers Nice : indices à photographier, questions des bénévoles dans un temps imparti.",
       img: "/photos_activités/Rallye.png",
     },
     {
@@ -96,20 +101,15 @@ export default function App() {
       img: null,
     },
     {
-      name: "Atelier participatif « clubs sportifs plus inclusifs »",
-      description: "Atelier pour développer des clubs sportifs plus inclusifs (vendredi 19h, Centre LGBTQIA+).",
+      name: "Atelier participatif",
+      description: "Atelier participatif (vendredi 19h, Centre LGBTQIA+, thème à préciser).",
       img: null,
     },
     {
-      name: "Course solidaire",
+      name: "Olympiades",
       description:
-        "Dimanche 17 mai à 12h : course de 2 km en solo ou duo. Rassemblement sur l'esplanade des Arcades du Château de Nice à partir de 11h30. Parking gratuit, tram Garibaldi Le Château puis montée à pied.",
+        "Dimanche 17 mai, 12h-15h30 au château. Jeux/épreuves conviviales. Rassemblement sur l'esplanade des Arcades du Château à partir de 12h00.",
       img: "/photos_activités/Course_solidaire.png",
-    },
-    {
-      name: "Jeux au château",
-      description: "Jeux au château le dimanche (après la course) sur la colline du château.",
-      img: null,
     },
   ];
 
@@ -117,18 +117,18 @@ export default function App() {
     {
       id: "pack1",
       label: "Pack N°1 : Basket 3x3 + Badminton double",
-      price: 29,
+      price: 25,
       type: "fixed",
       sports: [
-        "Basket 3x3 — Sam 16, 13h (UFR Staps)",
-        "Badminton double — Sam 16, 9h (UFR Staps)",
+        "Basket 3x3 — Samedi 16 à 13h (UFR Staps)",
+        "Badminton double — Samedi 16 à 9h (UFR Staps)",
       ],
       note: "Sports imposés, même lieu UFR Staps",
     },
     {
       id: "pack2",
       label: "Pack N°2 : Je m'inscris à 2 sports",
-      price: 32,
+      price: 30,
       type: "pick",
       pick: 2,
       note: "Choisir exactement 2 sports",
@@ -136,77 +136,63 @@ export default function App() {
     {
       id: "pack3",
       label: "Pack N°3 : Je m'inscris à 3 sports",
-      price: 34,
+      price: 32,
       type: "pick",
       pick: 3,
       note: "Choisir exactement 3 sports",
     },
     {
       id: "pack4",
-      label: "Pack N°4 : Je m'inscris à tous les sports",
-      price: 36,
-      type: "fixed",
-      sports: [
-        "Basket 3x3 — Sam 16, 13h (UFR Staps)",
-        "Badminton double — Sam 16, 9h (UFR Staps)",
-        "Pétanque — Ven 15, 9h (Boulodrome Henri Bernard)",
-        "Football à 7 — Jeu 14, 9h (Terrain 14 Arboras)",
-        "Tennis de table — Jeu 14, 10h (Gymnase lycée des Eucalyptus)",
-      ],
-      note: "Tous les sports du planning",
+      label: "Pack N°4 : Je m'inscris à 4 sports",
+      price: 34,
+      type: "pick",
+      pick: 4,
+      note: "Choisir exactement 4 sports (Foot OU Tennis de table, pas les deux)",
     },
   ];
 
   // Événements (avec tes précisions)
   const EVENTS = [
-    { id: "wed-rallye", label: "Rallye urbain (Centre LGBTQIA+)", place: "Centre LGBTQIA+", price: 8, day: "wed", start: "14h00", end: "16h00" },
-    { id: "wed-welcome", label: "Soirée d’accueil des participantes", place: "Centre LGBTQIA+", price: 0, day: "wed", start: "17h00", end: "20h00" },
-    { id: "thu-karaoke", label: "Karaoké", place: "Croque Bedaine", price: 5, day: "thu", start: "19h00", end: "21h00" },
+    { id: "wed-rallye", label: "Rallye urbain (Centre LGBTQIA+)", place: "Centre LGBTQIA+", price: 8, day: "wed", start: "13h30", end: "16h30" },
+    { id: "wed-welcome", label: "Soirée d’accueil des participantes", place: "Centre LGBTQIA+", price: 0, day: "wed", start: "17h00", end: "22h00" },
+    { id: "thu-karaoke", label: "Karaoké", place: "Croque Bedaine", price: 5, day: "thu", start: "19h00", end: "00h00" },
     { id: "thu-fri-sortie", label: "Sortie culturelle : Rando - Balade - Visite", place: "Lieu à préciser", price: 5, days: ["thu", "fri"], start: "", end: "" },
-    { id: "fri-activelles", label: "Soirée Activ’elles", place: "Centre LGBTQIA+", price: 0, day: "fri", start: "19h00", end: "22h00" },
-    { id: "fri-atelier", label: "Atelier participatif « Comment développer des clubs sportifs plus inclusifs ? »", place: "Centre LGBTQIA+", price: 0, day: "fri", start: "19h00", end: "21h00" },
-    { id: "fri-before", label: "Soirée jeux en before ? (baby-foot ? Bar Ozz ou autre)", place: "Lieu à confirmer", price: 0, day: "fri", start: "", end: "" },
-    { id: "fri-cantine", label: "Soirée à la Cantine de Jo ? (Anne et Muriel)", place: "Lieu à confirmer", price: 0, day: "fri", start: "", end: "" },
-    { id: "fri-fullgirlz", label: "Soirée Full Girlz", place: "Kosma ou Glam (à confirmer)", price: 0, day: "fri", start: "23h30", end: "02h30" },
+    { id: "fri-atelier", label: "Atelier participatif", place: "Centre LGBTQIA+", price: 0, day: "fri", start: "19h00", end: "22h00" },
+    { id: "fri-fullgirlz", label: "Soirée Full Girlz (payante sur place)", place: "Kosma ou Glam (à confirmer)", price: 0, day: "fri", start: "23h30", end: "04h00" },
     { id: "sat-bigparty", label: "Big Soirée de clôture WISDIN", place: "Lieu à déterminer", price: 15, day: "sat", start: "20h00", end: "02h00" },
-    { id: "sun-course", label: "Course solidaire au château (sous réserve)", place: "Château", price: 4, day: "sun", start: "12h00", end: "12h45" },
-    { id: "sun-games", label: "Jeux au château", place: "Château", price: 0, day: "sun", start: "12h30", end: "14h00" },
-    { id: "sun-buffet", label: "Buffet offert par la Ville de Nice", place: "Château", price: 0, day: "sun", start: "13h00", end: "14h30" },
-    { id: "sun-cloture", label: "Clôture WISDIN", place: "Château", price: 0, day: "sun", start: "16h00", end: "17h00" },
+    { id: "sun-olympiades", label: "Olympiades au château", place: "Château", price: 5, day: "sun", start: "12h00", end: "15h30" },
+    { id: "sun-buffet", label: "Buffet offert par la Ville de Nice", place: "Château", price: 0, day: "sun", start: "12h00", end: "" },
+    { id: "sun-cloture", label: "Clôture WISDIN", place: "Château", price: 0, day: "sun", start: "16h00", end: "" },
   ];
-  const EVENT_ACTIVITY_IDS = ["wed-rallye", "thu-fri-sortie", "fri-atelier", "sun-course", "sun-games"];
-  const EVENT_SOIREE_IDS = ["wed-welcome", "thu-karaoke", "fri-activelles", "fri-before", "fri-cantine", "fri-fullgirlz", "sat-bigparty"];
+  const EVENT_ACTIVITY_IDS = ["wed-rallye", "thu-fri-sortie", "fri-atelier", "sun-olympiades"];
+  const EVENT_SOIREE_IDS = ["wed-welcome", "thu-karaoke", "fri-fullgirlz", "sat-bigparty"];
 
   const SCHEDULE = {
     wed: [
-      { time: "14h00", timeEnd: "16h00", title: "Rallye urbain", place: "Départ/arrivée Centre LGBTQIA+", type: "activite" },
-      { time: "17h00", timeEnd: "20h00", title: "Soirée d’accueil des participantes", place: "Centre LGBTQIA+", type: "soiree" },
+      { time: "13h30", timeEnd: "16h30", title: "Rallye urbain", place: "Départ/arrivée Centre LGBTQIA+", type: "activite" },
+      { time: "17h00", timeEnd: "22h00", title: "Soirée d’accueil des participantes", place: "Centre LGBTQIA+", type: "soiree" },
     ],
     thu: [
-      { time: "09h00", timeEnd: "11h00", title: "Football à 7", place: "Terrain 14 des Arboras", type: "sport" },
-      { time: "10h00", timeEnd: "12h00", title: "Tennis de table", place: "Gymnase du lycée des Eucalyptus", type: "sport" },
+      { time: "09h00", timeEnd: "16h00", title: "Football à 7", place: "Terrain 14 des Arboras", type: "sport" },
+      { time: "10h00", timeEnd: "15h00", title: "Tennis de table", place: "Gymnase du lycée des Eucalyptus", type: "sport" },
       { time: "À préciser", timeEnd: "", title: "Sortie culturelle : Rando - Balade - Visite", place: "Lieu à préciser", type: "activite" },
-      { time: "19h00", timeEnd: "21h00", title: "Karaoké", place: "Croque Bedaine", type: "soiree" },
+      { time: "19h00", timeEnd: "00h00", title: "Karaoké", place: "Croque Bedaine", type: "soiree" },
     ],
     fri: [
-      { time: "09h00", timeEnd: "12h00", title: "Pétanque", place: "Boulodrome Henri Bernard", type: "sport" },
-      { time: "19h00", timeEnd: "22h00", title: "Soirée Activ’elles", place: "Centre LGBTQIA+", type: "soiree" },
-      { time: "19h00", timeEnd: "21h00", title: "Atelier participatif « clubs sportifs plus inclusifs »", place: "Centre LGBTQIA+", type: "activite" },
+      { time: "09h00", timeEnd: "16h00", title: "Pétanque", place: "Boulodrome Henri Bernard", type: "sport" },
+      { time: "19h00", timeEnd: "22h00", title: "Atelier participatif (thème à préciser)", place: "Centre LGBTQIA+", type: "activite" },
       { time: "À préciser", timeEnd: "", title: "Sortie culturelle : Rando - Balade - Visite", place: "Lieu à préciser", type: "activite" },
-      { time: "À préciser", timeEnd: "", title: "Soirée jeux en before ? Baby-foot ? Bar Ozz ou autre", place: "Lieu à confirmer", type: "soiree" },
-      { time: "À préciser", timeEnd: "", title: "Soirée à la Cantine de Jo ? (avec Anne et Muriel)", place: "Lieu à confirmer", type: "soiree" },
-      { time: "23h30", timeEnd: "02h30", title: "Soirée Full Girlz", place: "Kosma ou Glam (à confirmer)", type: "soiree" },
+      { time: "23h30", timeEnd: "04h00", title: "Soirée Full Girlz (payante sur place)", place: "Kosma ou Glam (à confirmer)", type: "soiree" },
     ],
     sat: [
       { time: "09h00", timeEnd: "12h00", title: "Badminton double", place: "UFR Staps", type: "sport" },
-      { time: "13h00", timeEnd: "15h00", title: "Basket 3x3", place: "UFR Staps", type: "sport" },
+      { time: "13h00", timeEnd: "16h00", title: "Basket 3x3", place: "UFR Staps", type: "sport" },
       { time: "20h00", timeEnd: "02h00", title: "Big Soirée de clôture WISDIN", place: "Lieu à déterminer", type: "soiree" },
     ],
     sun: [
-      { time: "12h00", timeEnd: "12h45", title: "Course solidaire (sous réserve)", place: "Château", type: "activite" },
-      { time: "12h30", timeEnd: "14h00", title: "Jeux au château", place: "Château", type: "activite" },
-      { time: "13h00", timeEnd: "14h30", title: "Buffet offert par la Ville de Nice", place: "Château", type: "commun" },
-      { time: "16h00", timeEnd: "17h00", title: "Clôture WISDIN", place: "Château", type: "commun" },
+      { time: "12h00", timeEnd: "", title: "Buffet offert par la Ville de Nice", place: "Château", type: "commun" },
+      { time: "12h00", timeEnd: "15h30", title: "Olympiades au château", place: "Château", type: "activite" },
+      { time: "16h00", timeEnd: "", title: "Clôture WISDIN", place: "Château", type: "commun" },
     ],
   };
 
@@ -293,10 +279,14 @@ export default function App() {
 
   const togglePackPickSport = (sport) => {
     if (!packObj || packObj.type !== "pick") return;
-
+    const isFoot = sport.toLowerCase().includes("football");
+    const isTennis = sport.toLowerCase().includes("tennis de table");
     setPackSportsPick((prev) => {
       const exists = prev.includes(sport);
       if (exists) return prev.filter((s) => s !== sport);
+      // blocage foot vs tennis
+      if (isFoot && prev.some((s) => s.toLowerCase().includes("tennis de table"))) return prev;
+      if (isTennis && prev.some((s) => s.toLowerCase().includes("football"))) return prev;
       if (prev.length >= packObj.pick) return prev; // bloque
       return [...prev, sport];
     });
@@ -321,24 +311,35 @@ export default function App() {
   const total = useMemo(() => {
     let sum = 0;
 
+    const hasSport = selectedSports.length > 0;
+    const hasPaidEventSelected = events.some((id) => {
+      const found = EVENTS.find((e) => e.id === id);
+      return found && (found.price || 0) > 0;
+    });
+    const paidActivityEligible = hasSport || hasPaidEventSelected;
+
     // tarif (pack ou à la carte)
     sum += tariffPrice;
 
-    // events
+    // events avec règles spécifiques
     for (const ev of events) {
       const found = EVENTS.find((e) => e.id === ev);
-      if (found) sum += found.price || 0;
+      if (!found) continue;
+      let price = found.price || 0;
+      if (found.id === "thu-fri-sortie" && hasSport) price = 0;
+      if (found.id === "sun-olympiades" && hasSport) price = 0;
+      if (found.id === "thu-karaoke" && paidActivityEligible) price = 0;
+      if (found.id === "fri-fullgirlz") price = 0; // payant sur place
+      sum += price;
     }
 
-    // meals
+    // meals (pas de repas dimanche)
     if (days.thu) sum += MEAL_PRICES[mealByDay.thu] || 0;
     if (days.fri) sum += MEAL_PRICES[mealByDay.fri] || 0;
     if (days.sat) sum += MEAL_PRICES[mealByDay.sat] || 0;
-    if (days.sun) sum += MEAL_PRICES[mealByDay.sun] || 0;
-
 
     return sum;
-  }, [tariffPrice, events, days, mealByDay]);
+  }, [tariffPrice, events, days, mealByDay, selectedSports]);
 
   const goToHelloAsso = () => {
     setShowPaymentPrompt(true);
@@ -604,8 +605,8 @@ export default function App() {
         ) : activeTab === "presentation" ? (
           <>
             <h2 style={styles.h2}>À propos de WISDIN 2026</h2>
-            <p style={styles.helper}>
-              WISDIN, ce sont avant tout des rencontres et non une réelle compétition. Objectif : partager un maximum
+            <p style={{ ...styles.helper, fontWeight: 800 }}>
+              WISDIN, ce sont avant tout des rencontres et non une réelle compétition. But : partager un maximum
               d’activités sportives et culturelles dans un univers de femmes et en toute sécurité.
             </p>
             <div style={styles.presentationMedia}>
@@ -617,7 +618,7 @@ export default function App() {
             </div>
             <div style={styles.presentationGrid}>
               <div style={styles.presentationCol}>
-                <div style={styles.presBlockTitle}>Objectifs</div>
+                <div style={styles.presBlockTitle}>But</div>
                 <ul style={styles.presList}>
                   <li>Lutter contre les discriminations.</li>
                   <li>Promouvoir les droits des femmes, l’égalité et la diversité.</li>
@@ -638,7 +639,7 @@ export default function App() {
                   <div style={styles.presBlockTitle}>Territoire</div>
                   <p style={styles.presParagraph}>
                     Rencontres organisées dans la Ville de Nice, accueillant des participantes de la région PACA, de la
-                    France et de l’Europe.
+                    France, de l’Europe, et du reste du monde.
                   </p>
                 </div>
               </div>
@@ -718,6 +719,22 @@ export default function App() {
             <Section title="Nous écrire">
               <div style={styles.recapLine}>
                 Email : <a href="mailto:wisdincaramelles@gmail.com">wisdincaramelles@gmail.com</a>
+              </div>
+            </Section>
+            <Section title="Réseaux">
+              <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center" }}>
+                <a href="http://caramelles06.free.fr/sommaire.html" target="_blank" rel="noreferrer" style={styles.contactLink}>
+                  <img src="/partners/caramelles.png" alt="Caram'elles" style={styles.contactIcon} />
+                  <span>Site Caram'elles</span>
+                </a>
+                <a href="https://www.instagram.com/caramelles06/" target="_blank" rel="noreferrer" style={styles.contactLink}>
+                  <span style={styles.contactEmoji}>📸</span>
+                  <span>Instagram</span>
+                </a>
+                <a href="https://www.facebook.com/caramelles06" target="_blank" rel="noreferrer" style={styles.contactLink}>
+                  <span style={styles.contactEmoji}>📘</span>
+                  <span>Facebook</span>
+                </a>
               </div>
             </Section>
           </>
@@ -864,69 +881,82 @@ export default function App() {
             <Section title="🏃‍♀️ Activités">
               {visibleEvents
                 .filter((e) => EVENT_ACTIVITY_IDS.includes(e.id))
-                .map((e) => (
-                  <label key={e.id} style={styles.option}>
-                    <input
-                      type="checkbox"
-                      style={styles.checkbox}
-                      checked={events.includes(e.id)}
-                      onChange={() => toggle(events, e.id, setEvents)}
-                    />
-                    <span style={{ flex: 1 }}>
-                      {e.label}
-                      <span style={styles.miniNote}>
-                        {" • "}
-                        {(() => {
-                          const d = Array.isArray(e.days) ? e.days : e.day ? [e.day] : [];
-                          const dayLabel =
-                            d.length === 0
-                              ? "Jour à préciser"
-                              : d.map((k) => DAY_LABEL[k] || k).join(" & ");
-                          const time =
-                            e.start || e.end
-                              ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}`
-                              : "Horaire à préciser";
-                          return `${dayLabel} • ${time}`;
-                        })()}
+                .map((e) => {
+                  const d = Array.isArray(e.days) ? e.days : e.day ? [e.day] : [];
+                  const dayLabel =
+                    d.length === 0 ? "Jour à préciser" : d.map((k) => DAY_LABEL[k] || k).join(" & ");
+                  const time =
+                    e.start || e.end
+                      ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}`
+                      : "Horaire à préciser";
+
+                  const hasSport = selectedSports.length > 0;
+                  let priceText = e.price === 0 ? "Gratuit" : `${e.price}€`;
+                  if (e.id === "thu-fri-sortie" && hasSport) priceText = "Inclus si inscrite à un sport";
+                  if (e.id === "sun-olympiades" && hasSport) priceText = "Inclus si inscrite à un sport";
+
+                  return (
+                    <label key={e.id} style={styles.option}>
+                      <input
+                        type="checkbox"
+                        style={styles.checkbox}
+                        checked={events.includes(e.id)}
+                        onChange={() => toggle(events, e.id, setEvents)}
+                      />
+                      <span style={{ flex: 1 }}>
+                        {e.label}
+                        <span style={styles.miniNote}>
+                          {" • "}
+                          {dayLabel} • {time}
+                        </span>
                       </span>
-                    </span>
-                    <span style={styles.priceTag}>{e.price === 0 ? "Gratuit" : `${e.price}€`}</span>
-                  </label>
-                ))}
+                      <span style={styles.priceTag}>{priceText}</span>
+                    </label>
+                  );
+                })}
             </Section>
 
             <Section title="🌙 Soirées">
               {visibleEvents
                 .filter((e) => EVENT_SOIREE_IDS.includes(e.id))
-                .map((e) => (
-                  <label key={e.id} style={styles.option}>
-                    <input
-                      type="checkbox"
-                      style={styles.checkbox}
-                      checked={events.includes(e.id)}
-                      onChange={() => toggle(events, e.id, setEvents)}
-                    />
-                    <span style={{ flex: 1 }}>
-                      {e.label}
-                      <span style={styles.miniNote}>
-                        {" • "}
-                        {(() => {
-                          const d = Array.isArray(e.days) ? e.days : e.day ? [e.day] : [];
-                          const dayLabel =
-                            d.length === 0
-                              ? "Jour à préciser"
-                              : d.map((k) => DAY_LABEL[k] || k).join(" & ");
-                          const time =
-                            e.start || e.end
-                              ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}`
-                              : "Horaire à préciser";
-                          return `${dayLabel} • ${time}`;
-                        })()}
+                .map((e) => {
+                  const d = Array.isArray(e.days) ? e.days : e.day ? [e.day] : [];
+                  const dayLabel =
+                    d.length === 0 ? "Jour à préciser" : d.map((k) => DAY_LABEL[k] || k).join(" & ");
+                  const time =
+                    e.start || e.end
+                      ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}`
+                      : "Horaire à préciser";
+
+                  const hasSport = selectedSports.length > 0;
+                  const hasPaidEventSelected = events.some((id) => {
+                    const found = EVENTS.find((evt) => evt.id === id);
+                    return found && (found.price || 0) > 0;
+                  });
+                  const paidActivityEligible = hasSport || hasPaidEventSelected;
+                  let priceText = e.price === 0 ? "Gratuit" : `${e.price}€`;
+                  if (e.id === "thu-karaoke") priceText = paidActivityEligible ? "Inclus si inscrite à une activité payante" : "5€";
+                  if (e.id === "fri-fullgirlz") priceText = "Payant sur place";
+
+                  return (
+                    <label key={e.id} style={styles.option}>
+                      <input
+                        type="checkbox"
+                        style={styles.checkbox}
+                        checked={events.includes(e.id)}
+                        onChange={() => toggle(events, e.id, setEvents)}
+                      />
+                      <span style={{ flex: 1 }}>
+                        {e.label}
+                        <span style={styles.miniNote}>
+                          {" • "}
+                          {dayLabel} • {time}
+                        </span>
                       </span>
-                    </span>
-                    <span style={styles.priceTag}>{e.price === 0 ? "Gratuit" : `${e.price}€`}</span>
-                  </label>
-                ))}
+                      <span style={styles.priceTag}>{priceText}</span>
+                    </label>
+                  );
+                })}
             </Section>
 
             <Section title="🤝 Moments communs">
@@ -936,35 +966,34 @@ export default function App() {
                     !EVENT_ACTIVITY_IDS.includes(e.id) &&
                     !EVENT_SOIREE_IDS.includes(e.id)
                 )
-                .map((e) => (
-                  <label key={e.id} style={styles.option}>
-                    <input
-                      type="checkbox"
-                      style={styles.checkbox}
-                      checked={events.includes(e.id)}
-                      onChange={() => toggle(events, e.id, setEvents)}
-                    />
-                    <span style={{ flex: 1 }}>
-                      {e.label}
-                      <span style={styles.miniNote}>
-                        {" • "}
-                        {(() => {
-                          const d = Array.isArray(e.days) ? e.days : e.day ? [e.day] : [];
-                          const dayLabel =
-                            d.length === 0
-                              ? "Jour à préciser"
-                              : d.map((k) => DAY_LABEL[k] || k).join(" & ");
-                          const time =
-                            e.start || e.end
-                              ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}`
-                              : "Horaire à préciser";
-                          return `${dayLabel} • ${time}`;
-                        })()}
+                .map((e) => {
+                  const d = Array.isArray(e.days) ? e.days : e.day ? [e.day] : [];
+                  const dayLabel =
+                    d.length === 0 ? "Jour à préciser" : d.map((k) => DAY_LABEL[k] || k).join(" & ");
+                  const time =
+                    e.start || e.end
+                      ? `${e.start || "Horaire à préciser"}${e.end ? ` – ${e.end}` : ""}`
+                      : "Horaire à préciser";
+                  let priceText = e.price === 0 ? "Gratuit" : `${e.price}€`;
+                  return (
+                    <label key={e.id} style={styles.option}>
+                      <input
+                        type="checkbox"
+                        style={styles.checkbox}
+                        checked={events.includes(e.id)}
+                        onChange={() => toggle(events, e.id, setEvents)}
+                      />
+                      <span style={{ flex: 1 }}>
+                        {e.label}
+                        <span style={styles.miniNote}>
+                          {" • "}
+                          {dayLabel} • {time}
+                        </span>
                       </span>
-                    </span>
-                    <span style={styles.priceTag}>{e.price === 0 ? "Gratuit" : `${e.price}€`}</span>
-                  </label>
-                ))}
+                      <span style={styles.priceTag}>{priceText}</span>
+                    </label>
+                  );
+                })}
             </Section>
 
                 <div style={styles.nav}>
@@ -1009,48 +1038,57 @@ export default function App() {
                 <Section title="🏸 Badminton">
                   {isBadmintonSelected ? (
                     <div style={styles.block}>
-                      <div style={styles.formRow}>
-                        <div style={styles.fieldLabel}>Niveau</div>
+                  <div style={styles.formRow}>
+                    <div style={styles.fieldLabel}>Niveau</div>
 
-                        <div style={styles.selectWrap}>
-                          <select
-                            value={badmintonLevel}
-                            onChange={(e) => setBadmintonLevel(e.target.value)}
-                            style={styles.select}
-                          >
-                            <option value="">Choisir un niveau</option>
-                            <option>Débutant</option>
-                            <option>Intermédiaire</option>
-                            <option>Très bon niveau</option>
-                          </select>
-                          <span style={styles.selectArrow}>▾</span>
-                        </div>
-                      </div>
+                    <div style={styles.selectWrap}>
+                      <select
+                        value={badmintonLevel}
+                        onChange={(e) => setBadmintonLevel(e.target.value)}
+                        style={styles.select}
+                      >
+                        <option value="">Choisir un niveau</option>
+                        <option value="1">1 - Débutant (jamais joué)</option>
+                        <option value="2">2 - Débutant</option>
+                        <option value="3">3 - Intermédiaire</option>
+                        <option value="4">4 - Bon niveau</option>
+                      </select>
+                      <span style={styles.selectArrow}>▾</span>
+                    </div>
+                  </div>
 
+                  <div style={styles.block}>
+                    <div style={styles.fieldLabel}>Partenaire</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       <label style={styles.option}>
                         <input
-                          type="checkbox"
-                          style={styles.checkbox}
-                          checked={needPartner}
-                          onChange={() => setNeedPartner(!needPartner)}
+                          type="radio"
+                          name="partner-choice"
+                          checked={partnerChoice === "have"}
+                          onChange={() => setPartnerChoice("have")}
+                        />
+                        <span>J’ai une partenaire</span>
+                      </label>
+                      {partnerChoice === "have" && (
+                        <input
+                          style={styles.input}
+                          placeholder="Nom de la partenaire"
+                          value={partnerName}
+                          onChange={(e) => setPartnerName(e.target.value)}
+                        />
+                      )}
+                      <label style={styles.option}>
+                        <input
+                          type="radio"
+                          name="partner-choice"
+                          checked={partnerChoice === "need"}
+                          onChange={() => setPartnerChoice("need")}
                         />
                         <span>J’ai besoin d’une partenaire</span>
                       </label>
-
-                      {needPartner && (
-                        <>
-                          <input
-                            style={styles.input}
-                            placeholder="Nom de la partenaire (optionnel)"
-                            value={partnerName}
-                            onChange={(e) => setPartnerName(e.target.value)}
-                          />
-                          <div style={styles.helper}>
-                            Si tu n’as pas encore de partenaire, laisse vide : l’orga pourra aider au matching.
-                          </div>
-                        </>
-                      )}
                     </div>
+                  </div>
+                </div>
                   ) : (
                     <p style={styles.muted}>(Aucune option badminton)</p>
                   )}
@@ -1058,20 +1096,18 @@ export default function App() {
 
                 {/* REPAS */}
                 <Section title="🍽️ Repas" note="  ">
-                  {!(days.thu || days.fri || days.sat || days.sun) ? (
-                    <p style={styles.muted}>(Aucun jour sélectionné — choisis tes jours à l’étape 1)</p>
-                  ) : (
-                    <>
-                      {days.thu && <DayMealPicker dayKey="thu" />}
-                      {days.fri && <DayMealPicker dayKey="fri" />}
-                      {days.sat && <DayMealPicker dayKey="sat" />}
-                      {days.sun && <DayMealPicker dayKey="sun" />}
+              {!(days.thu || days.fri || days.sat) ? (
+                <p style={styles.muted}>(Aucun jour sélectionné — choisis tes jours à l’étape 1)</p>
+              ) : (
+                <>
+                  {days.thu && <DayMealPicker dayKey="thu" />}
+                  {days.fri && <DayMealPicker dayKey="fri" />}
+                  {days.sat && <DayMealPicker dayKey="sat" />}
 
-
-                      <div style={styles.helper}>
-                        Tu peux sélectionner un repas différent chaque jour si tu es présente plusieurs jours.
-                      </div>
-                    </>
+                  <div style={styles.helper}>
+                    Tu peux sélectionner un repas différent chaque jour si tu es présente plusieurs jours.
+                  </div>
+                </>
                   )}
                 </Section>
 
@@ -1126,19 +1162,24 @@ export default function App() {
                   </div>
                 </Section>
 
-                <Section title="🏸 Badminton (options)">
-                  {isBadmintonSelected ? (
-                    <>
-                      <div style={styles.recapLine}>
-                        <strong>Niveau :</strong> {badmintonLevel || "—"}
-                      </div>
-                      <div style={styles.recapLine}>
-                        <strong>Partenaire :</strong> {needPartner ? partnerName || "à trouver" : "non"}
-                      </div>
-                    </>
-                  ) : (
-                    <div style={styles.muted}>(Badminton non sélectionné)</div>
-                  )}
+            <Section title="🏸 Badminton (options)">
+              {isBadmintonSelected ? (
+                <>
+                  <div style={styles.recapLine}>
+                    <strong>Niveau :</strong> {badmintonLevel || "—"}
+                  </div>
+                  <div style={styles.recapLine}>
+                    <strong>Partenaire :</strong>{" "}
+                    {partnerChoice === "have"
+                      ? partnerName || "oui"
+                      : partnerChoice === "need"
+                      ? "à trouver"
+                      : "non renseigné"}
+                  </div>
+                </>
+              ) : (
+                <div style={styles.muted}>(Badminton non sélectionné)</div>
+              )}
                 </Section>
 
                 <Section title="🍽️ Repas">
@@ -1155,11 +1196,6 @@ export default function App() {
                   {days.sat && (
                     <div style={styles.recapLine}>
                       <strong>Samedi :</strong> {MEAL_LABEL[mealByDay.sat]}
-                    </div>
-                  )}
-                  {days.sun && (
-                    <div style={styles.recapLine}>
-                      <strong>Dimanche :</strong> {MEAL_LABEL[mealByDay.sun]}
                     </div>
                   )}
                 </Section>
@@ -1559,6 +1595,21 @@ const styles = {
     color: "#7c1111",
   },
   partnerLogo: { maxWidth: "100%", maxHeight: 70, objectFit: "contain" },
+
+  contactLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "8px 12px",
+    border: "1px solid #e4d5ff",
+    borderRadius: 10,
+    textDecoration: "none",
+    color: "#7c1111",
+    fontWeight: 800,
+    background: "rgba(255,255,255,0.95)",
+  },
+  contactIcon: { width: 38, height: 38, borderRadius: "50%", objectFit: "cover" },
+  contactEmoji: { fontSize: 20 },
 
   infoGrid: {
     display: "grid",
