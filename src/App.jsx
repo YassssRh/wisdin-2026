@@ -606,7 +606,7 @@ export default function App() {
           <>
             <h2 style={styles.h2}>À propos de WISDIN 2026</h2>
             <p style={{ ...styles.helper, fontWeight: 800 }}>
-              WISDIN, ce sont avant tout des rencontres et non une réelle compétition. But : partager un maximum
+              WISDIN, ce sont avant tout des rencontres et non une réelle compétition. Le but est de partager un maximum
               d’activités sportives et culturelles dans un univers de femmes et en toute sécurité.
             </p>
             <div style={styles.presentationMedia}>
