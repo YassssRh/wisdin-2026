@@ -22,6 +22,7 @@ export default function App() {
   const [badmintonLevel, setBadmintonLevel] = useState("");
   const [partnerChoice, setPartnerChoice] = useState(""); // "have" | "need"
   const [partnerName, setPartnerName] = useState("");
+  const [participantEmail, setParticipantEmail] = useState("");
 
   // ÉTAPE 3 — Repas (1 choix par jour)
   const [mealByDay, setMealByDay] = useState({ thu: "", fri: "", sat: "" , sun: "" });
@@ -74,7 +75,7 @@ export default function App() {
     {
       name: "Pétanque",
       description: "Tournoi de pétanque. Pétanque en triplette au boulodrome Henri Bernard",
-      img: "/photos_sports/Pétanque.png",
+      img: "/photos_sports/petanque.png",
     },
     {
       name: "Tennis de table",
@@ -93,7 +94,7 @@ export default function App() {
       name: "Rallye urbain",
       description:
         "Point de départ et d'arrivée au Centre LGBTQIA+ (123 rue de Roquebillière). Rdv 13h30. Course d’orientation à travers Nice : indices à photographier, questions des bénévoles dans un temps imparti.",
-      img: "/photos_activités/Rallye.png",
+      img: "/photos_activites/Rallye.png",
     },
     {
       name: "Sortie culturelle : Rando - Balade - Visite",
@@ -109,7 +110,7 @@ export default function App() {
       name: "Olympiades",
       description:
         "Dimanche 17 mai, 12h-15h30 au château. Jeux/épreuves conviviales. Rassemblement sur l'esplanade des Arcades du Château à partir de 12h00.",
-      img: "/photos_activités/Course_solidaire.png",
+      img: "/photos_activites/Course_solidaire.png",
     },
   ];
 
@@ -154,12 +155,12 @@ export default function App() {
   // Événements (avec tes précisions)
   const EVENTS = [
     { id: "wed-rallye", label: "Rallye urbain (Centre LGBTQIA+)", place: "Centre LGBTQIA+", price: 8, day: "wed", start: "13h30", end: "16h30" },
-    { id: "wed-welcome", label: "Soirée d’accueil des participantes", place: "Centre LGBTQIA+", price: 0, day: "wed", start: "17h00", end: "22h00" },
+    { id: "wed-welcome", label: "Soirée d’accueil", place: "Centre LGBTQIA+", price: 0, day: "wed", start: "17h00", end: "22h00" },
     { id: "thu-karaoke", label: "Karaoké", place: "Croque Bedaine", price: 5, day: "thu", start: "19h00", end: "00h00" },
     { id: "thu-fri-sortie", label: "Sortie culturelle : Rando - Balade - Visite", place: "Lieu à préciser", price: 5, days: ["thu", "fri"], start: "", end: "" },
     { id: "fri-atelier", label: "Atelier participatif", place: "Centre LGBTQIA+", price: 0, day: "fri", start: "19h00", end: "22h00" },
     { id: "fri-fullgirlz", label: "Soirée Full Girlz (payante sur place)", place: "Kosma ou Glam (à confirmer)", price: 0, day: "fri", start: "23h30", end: "04h00" },
-    { id: "sat-bigparty", label: "Big Soirée de clôture WISDIN", place: "Lieu à déterminer", price: 15, day: "sat", start: "20h00", end: "02h00" },
+    { id: "sat-bigparty", label: "Soirée de clôture WISDIN", place: "Lieu à déterminer", price: 15, day: "sat", start: "20h00", end: "02h00" },
     { id: "sun-olympiades", label: "Olympiades au château", place: "Château", price: 5, day: "sun", start: "12h00", end: "15h30" },
     { id: "sun-buffet", label: "Buffet offert par la Ville de Nice", place: "Château", price: 0, day: "sun", start: "12h00", end: "" },
     { id: "sun-cloture", label: "Clôture WISDIN", place: "Château", price: 0, day: "sun", start: "16h00", end: "" },
@@ -343,6 +344,50 @@ export default function App() {
 
   const goToHelloAsso = () => {
     setShowPaymentPrompt(true);
+  };
+
+  const copyTotal = async () => {
+    try {
+      await navigator.clipboard.writeText(`${total}`);
+    } catch (e) {
+      // ignore
+    }
+  };
+
+  const buildRecapEmailBody = () => {
+    const daysSelected = Object.entries(days)
+      .filter(([, v]) => v)
+      .map(([k]) => DAY_LABEL[k])
+      .join(", ") || "Aucun";
+    const sportsList = selectedSports.join(", ") || "Aucun";
+    const eventsList = events.map((id) => EVENTS.find((e) => e.id === id)?.label || id).join(", ") || "Aucun";
+    return [
+      "Hello !",
+      "",
+      "Voici le récap de ton inscription WISDIN :",
+      `- Jours : ${daysSelected}`,
+      `- Sports : ${sportsList}`,
+      `- Événements/activités : ${eventsList}`,
+      `- Total à régler : ${total}€`,
+      "",
+      "Merci à toi de saisir exactement ce montant sur HelloAsso. Toutes les inscriptions seront vérifiées par l’organisation.",
+      "",
+      "On a hâte de te retrouver pour un WISDIN de folie !!!",
+      "",
+      "Association Caram'elles",
+      "Véro : 06.30.27.53.10",
+      "Annick : 06.64.25.61.01",
+      "http://caramelles06.free.fr/",
+      "https://www.facebook.com/Caramelles.06.Activiteswisdincaramelles@gmail.com",
+    ].join("\n");
+  };
+
+  const composeEmail = () => {
+    const subject = encodeURIComponent("Inscription WISDIN - récapitulatif");
+    const body = encodeURIComponent(buildRecapEmailBody());
+    const to = participantEmail || "";
+    const cc = "wisdincaramelles@gmail.com";
+    window.location.href = `mailto:${to}?cc=${cc}&subject=${subject}&body=${body}`;
   };
 
   const openHelloAsso = () => {
@@ -611,7 +656,7 @@ export default function App() {
             </p>
             <div style={styles.presentationMedia}>
               <img
-                src="/partners/Photo présentation .png"
+                src="/partners/photo-presentation.png"
                 alt="Groupe Caram'elles"
                 style={styles.presentationImg}
               />
@@ -728,11 +773,11 @@ export default function App() {
                   <span>Site Caram'elles</span>
                 </a>
                 <a href="https://www.instagram.com/caramelles06/" target="_blank" rel="noreferrer" style={styles.contactLink}>
-                  <span style={styles.contactEmoji}>📸</span>
+                  <img src="/logo_reseaux/insta_logo.png" alt="Instagram" style={styles.contactIcon} />
                   <span>Instagram</span>
                 </a>
                 <a href="https://www.facebook.com/caramelles06" target="_blank" rel="noreferrer" style={styles.contactLink}>
-                  <span style={styles.contactEmoji}>📘</span>
+                  <img src="/logo_reseaux/Facebook_logo.png" alt="Facebook" style={styles.contactIcon} />
                   <span>Facebook</span>
                 </a>
               </div>
@@ -1203,7 +1248,12 @@ export default function App() {
             <Section title="✅ Total">
               <div style={{ fontSize: 20, fontWeight: 900 }}>{total}€</div>
               <div style={styles.helper}>
-                Voilà pour le site proto, ensuite let's go continuer vers HelloAsso pour le terminal de paiement...
+                Toutes les inscriptions seront vérifiées par l’orga.
+              </div>
+              <div style={{ marginTop: 8 }}>
+                <button style={styles.secondary} onClick={() => window.print()}>
+                  Imprimer / PDF
+                </button>
               </div>
               <button style={{ ...styles.button, marginTop: 12 }} onClick={goToHelloAsso}>
                 Payer sur HelloAsso
@@ -1231,7 +1281,7 @@ export default function App() {
                 Montant à saisir sur HelloAsso : <strong>{total}€</strong>
               </div>
               <div style={styles.helper}>
-                Le montant ne peut pas être pré-rempli automatiquement. Copie-le puis clique sur “Ouvrir HelloAsso”.
+                Copie le montant puis clique sur “Ouvrir HelloAsso”.
               </div>
               <div style={styles.modalActions}>
                 <button style={styles.secondary} onClick={() => setShowPaymentPrompt(false)}>
